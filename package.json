@@ -1,0 +1,19 @@
+{
+  "name": "tdjrparticleswarmsolver",
+  "version": "1.0.0",
+  "description": "Rig for playing with using Particle Swarms for a solver",
+  "main": ",/src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tillmanjr/tdjrParticleSwarmSolver.git"
+  },
+  "author": "Tillman Dickson, Jr.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tillmanjr/tdjrParticleSwarmSolver/issues"
+  },
+  "homepage": "https://github.com/tillmanjr/tdjrParticleSwarmSolver#readme"
+}
