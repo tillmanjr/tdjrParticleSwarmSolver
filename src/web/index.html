@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC
+     "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>Graph 3D demo</title>
+
+    <style>
+      body {font: 10pt arial;}
+    </style>
+
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="./libs/graph3d.js"></script>
+    <script type="text/javascript" src="./bundles/bundle.js"></script>
+
+  </head>
+
+  <body>
+    <div id="mygraph"></div>
+    <script type="text/javascript">
+      
+
+
+      var data = null;
+      var graph = null;
+
+      google.load("visualization", "1");
+
+      // Set callback to run when API is loaded
+      google.setOnLoadCallback(drawVisualization);
+
+      function custom(x, y) {
+        return Math.sin(x/50) * Math.cos(y/50) * 50 + 50;
+      }
+      function compareXYZ( lhs, rhs) {
+        if (lhs.x > rhs.x) 
+          return 1
+        if (lhs.x < rhs.x) 
+          return -1
+        // the two x coordinates are equal so compare y coordingas
+        if (lhs.y > rhs.y) 
+          return 1
+        if (lhs.y < rhs.y) 
+          return -1
+        return 0
+      }
+
+      // Called when the Visualization API is loaded.
+      function drawVisualization() {
+        // Create and populate a data table.
+        data = new google.visualization.DataTable();
+        data.addColumn('number', 'x');
+        data.addColumn('number', 'y');
+        data.addColumn('number', 'z');
+
+        
+      if ( window['Swarming']) { 
+        var swarmResult = window['Swarming'].getTestData()
+        const xMult = 2
+        const yMult = 2
+        const zMult = 100
+        var swarmData = swarmResult.data.map(function (item) {
+          
+          return {
+            x: Math.ceil(item.x * xMult),
+            y: Math.ceil(item.y * yMult),
+            z: item.z * zMult,
+          }
+        })
+
+        swarmData.sort(compareXYZ)
+        for (var i = 0, len = swarmData.length; i < len; i++ ) {
+          var datum = swarmData[i]
+          var sx = datum.x 
+          var sy = datum.y
+          var sz = datum.z
+          data.addRow([sx, sy, sz])
+        }
+      }
+
+        // create some nice looking data with sin/cos
+
+        // var steps = 25;  // number of datapoints will be steps*steps
+        // var axisMax = 314;
+        // axisStep = axisMax / steps;
+        // for (var x = 0; x < axisMax; x+=axisStep) {
+        //   for (var y = 0; y < axisMax; y+=axisStep) {
+        //     var value = custom(x,y);
+        //     if (Math.random() > 0.20) {
+        //     data.addRow([x, y, value]);
+        //     }
+        //   }
+        // }
+
+        for (var j = 0, len = data.Nf.length; j < len; j++) {
+          var item = data.Nf[j].c
+          console.log(`x: ${item[0].v}\ty: ${item[1].v}\tz: ${item[2].v}`)
+        }
+
+        // specify options
+        options = {width:  "400px",
+                   height: "400px",
+                   style: "surface",
+                   showPerspective: true,
+                   showGrid: true,
+                   showShadow: true,
+                   keepAspectRatio: false,
+                   verticalRatio: 0.50,
+                   };
+
+        // Instantiate our graph object.
+        graph = new links.Graph3d(document.getElementById('mygraph'));
+
+        // Draw our graph with the created data and options
+        graph.draw(data, options);
+      }
+
+      </script>
+  </body>
+</html>
