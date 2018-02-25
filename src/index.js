@@ -1,14 +1,23 @@
 
-const {solveDoubleDip} = require('./tests/swarm-test')
+
+const {
+  doubleDipPlotData,
+  solveDoubleDip
+} = require('./tests/swarm-test')
 
 //test()
 
-function getTestData() {return solveDoubleDip() }
+function getDoubleDipPlotData() { return doubleDipPlotData() }
+function getTestData() { return solveDoubleDip() }
 
 if (!window['Swarming']) {
   window['Swarming'] = {
+    getDoubleDipPlotData,
     getTestData
   }
 }
 
-module.exports = {getTestData}
+module.exports = {
+  getDoubleDipPlotData,
+  getTestData
+}

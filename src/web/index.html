@@ -15,22 +15,20 @@
   </head>
 
   <body>
-    <div id="mygraph"></div>
+    <div id="swarmGraph"></div>
+    <div id="doubleDipPlotGraph"></div>
     <script type="text/javascript">
-      
+      var swarmPlotData = null;
+      var swarmGraph = null;
 
-
-      var data = null;
-      var graph = null;
+      var doubleDipPlotData = null;
+      var doubleDipPlotGraph = null;
 
       google.load("visualization", "1");
 
       // Set callback to run when API is loaded
       google.setOnLoadCallback(drawVisualization);
 
-      function custom(x, y) {
-        return Math.sin(x/50) * Math.cos(y/50) * 50 + 50;
-      }
       function compareXYZ( lhs, rhs) {
         if (lhs.x > rhs.x) 
           return 1
@@ -47,19 +45,33 @@
       // Called when the Visualization API is loaded.
       function drawVisualization() {
         // Create and populate a data table.
-        data = new google.visualization.DataTable();
-        data.addColumn('number', 'x');
-        data.addColumn('number', 'y');
-        data.addColumn('number', 'z');
+        swarmPlotData = new google.visualization.DataTable();
+        swarmPlotData.addColumn('number', 'x');
+        swarmPlotData.addColumn('number', 'y');
+        swarmPlotData.addColumn('number', 'z');
+
+        doubleDipPlotData = new google.visualization.DataTable();
+        doubleDipPlotData.addColumn('number', 'x');
+        doubleDipPlotData.addColumn('number', 'y');
+        doubleDipPlotData.addColumn('number', 'z');
 
         
       if ( window['Swarming']) { 
+
+        var doubleDipData = window['Swarming'].getDoubleDipPlotData()
+        for (var i = 0, len = doubleDipData.length; i < len; i++ ) {
+          var datum = doubleDipData[i]
+          var px = datum.x
+          var py = datum.y
+          var pz = datum.z * 1000.0
+          doubleDipPlotData.addRow([px, py, pz])
+        }
+
         var swarmResult = window['Swarming'].getTestData()
-        const xMult = 2
-        const yMult = 2
-        const zMult = 100
+        const xMult = 1.0 //2
+        const yMult = 1.0 //2
+        const zMult = 1000.0
         var swarmData = swarmResult.data.map(function (item) {
-          
           return {
             x: Math.ceil(item.x * xMult),
             y: Math.ceil(item.y * yMult),
@@ -67,51 +79,67 @@
           }
         })
 
-        swarmData.sort(compareXYZ)
+        //swarmData.sort(compareXYZ)
         for (var i = 0, len = swarmData.length; i < len; i++ ) {
           var datum = swarmData[i]
           var sx = datum.x 
           var sy = datum.y
           var sz = datum.z
-          data.addRow([sx, sy, sz])
+          swarmPlotData.addRow([sx, sy, sz])
         }
       }
 
-        // create some nice looking data with sin/cos
-
-        // var steps = 25;  // number of datapoints will be steps*steps
-        // var axisMax = 314;
-        // axisStep = axisMax / steps;
-        // for (var x = 0; x < axisMax; x+=axisStep) {
-        //   for (var y = 0; y < axisMax; y+=axisStep) {
-        //     var value = custom(x,y);
-        //     if (Math.random() > 0.20) {
-        //     data.addRow([x, y, value]);
-        //     }
-        //   }
-        // }
-
-        for (var j = 0, len = data.Nf.length; j < len; j++) {
-          var item = data.Nf[j].c
+        for (var j = 0, len = swarmPlotData.Nf.length; j < len; j++) {
+          var item = swarmPlotData.Nf[j].c
           console.log(`x: ${item[0].v}\ty: ${item[1].v}\tz: ${item[2].v}`)
         }
 
         // specify options
-        options = {width:  "400px",
-                   height: "400px",
+        options = {width:  "800px",
+                   height: "800px",
                    style: "surface",
-                   showPerspective: true,
+                   showXAxis: false,
+                   showYAxis: false,
+                   showZAxis: false,
+                   showPerspective: false,
                    showGrid: true,
                    showShadow: true,
+                   showLegend: true,
                    keepAspectRatio: false,
-                   verticalRatio: 0.50,
+                   verticalRatio: 1.0,
+                   tooltip: function (point) {
+                    // parameter point contains properties x, y, z
+                    const zVal= point.z != 0.0 ? point.z.toFixed(18) / 1000.0 : 0.0
+                    return `fn(${point.x.toFixed(18)}, ${point.y.toFixed(18)}) = <b>` + zVal + '</b>';
+                  }
                    };
 
         // Instantiate our graph object.
-        graph = new links.Graph3d(document.getElementById('mygraph'));
-
+        swarmGraph = new links.Graph3d(document.getElementById('swarmGraph'));
         // Draw our graph with the created data and options
-        graph.draw(data, options);
+        swarmGraph.draw(swarmPlotData, options);
+
+        dblDipOptions = {
+                  width:  "800px",
+                   height: "800px",
+                   style: "surface",
+                   showXAxis: false,
+                   showYAxis: false,
+                   showZAxis: false,
+                   showPerspective: false,
+                   showGrid: true,
+                   showShadow: true,
+                   showLegend: true,
+                   keepAspectRatio: false,
+                   verticalRatio: 1.0,
+                   tooltip: function (point) {
+                    // parameter point contains properties x, y, z
+                    const zVal= point.z != 0.0 ? point.z.toFixed(18) / 1000.0 : 0.0
+                    return `fn(${point.x.toFixed(2)}, ${point.y.toFixed(2)}) = <b>` + zVal + '</b>';
+                  }
+        };
+        doubleDipPlotGraph = new links.Graph3d(document.getElementById('doubleDipPlotGraph'));
+        doubleDipPlotGraph.draw(doubleDipPlotData, dblDipOptions)
       }
 
       </script>
