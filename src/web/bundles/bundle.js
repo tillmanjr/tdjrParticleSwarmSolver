@@ -110,7 +110,7 @@ class SwarmOfBees {
     minX,
     maxX,
     maxEpochs,
-    exitError
+    exitError // ignored for now
   ) {
     let bestGlobalPosition = prefilledVector(swarmSize, DEFAULT_VECTOR_PREFILL_VALUE)
     let bestGlobalError = DEFAULT_MAX_ERROR_VALUE
@@ -272,19 +272,28 @@ module.exports = {
 }
 },{}],5:[function(require,module,exports){
 
-const {solveDoubleDip} = require('./tests/swarm-test')
+
+const {
+  doubleDipPlotData,
+  solveDoubleDip
+} = require('./tests/swarm-test')
 
 //test()
 
-function getTestData() {return solveDoubleDip() }
+function getDoubleDipPlotData() { return doubleDipPlotData() }
+function getTestData() { return solveDoubleDip() }
 
 if (!window['Swarming']) {
   window['Swarming'] = {
+    getDoubleDipPlotData,
     getTestData
   }
 }
 
-module.exports = {getTestData}
+module.exports = {
+  getDoubleDipPlotData,
+  getTestData
+}
 },{"./tests/swarm-test":7}],6:[function(require,module,exports){
 "use strict;"
 
@@ -376,6 +385,8 @@ const doubleDip = (function (collectDataPointsFn) {
 
 })
 
+
+
 const _SolveDoubleDip = (collectErrorData) => {
   const data = []
   
@@ -437,8 +448,22 @@ const testDoubleDip = () => {
 
 const solveDoubleDip = () => _SolveDoubleDip(false)
 
+const doubleDipPlotData = () => {
+  const data = []
+  const dblDip = doubleDip(null)
+  for (var x = -10.0; x <= 10.0; x += 0.25) {
+    for (var y = -10.0; y <= 10.0; y += 0.25) {
+      const z = dblDip.computeResult(x, y)
+      data.push({x, y, z})
+    }
+  }
+  return data
+}
+
+
 module.exports = {
-  testDoubleDip,
-  solveDoubleDip
+  doubleDipPlotData,
+  solveDoubleDip,
+  testDoubleDip
 }
 },{"../SwarmChallenge":2,"../SwarmOfBees":3,"../formatters/textFormatters":4}]},{},[5]);

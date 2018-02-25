@@ -39,6 +39,8 @@ const doubleDip = (function (collectDataPointsFn) {
 
 })
 
+
+
 const _SolveDoubleDip = (collectErrorData) => {
   const data = []
   
@@ -100,7 +102,21 @@ const testDoubleDip = () => {
 
 const solveDoubleDip = () => _SolveDoubleDip(false)
 
+const doubleDipPlotData = () => {
+  const data = []
+  const dblDip = doubleDip(null)
+  for (var x = -10.0; x <= 10.0; x += 0.25) {
+    for (var y = -10.0; y <= 10.0; y += 0.25) {
+      const z = dblDip.computeResult(x, y)
+      data.push({x, y, z})
+    }
+  }
+  return data
+}
+
+
 module.exports = {
-  testDoubleDip,
-  solveDoubleDip
+  doubleDipPlotData,
+  solveDoubleDip,
+  testDoubleDip
 }

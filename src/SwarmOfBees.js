@@ -59,7 +59,7 @@ class SwarmOfBees {
     minX,
     maxX,
     maxEpochs,
-    exitError
+    exitError // ignored for now
   ) {
     let bestGlobalPosition = prefilledVector(swarmSize, DEFAULT_VECTOR_PREFILL_VALUE)
     let bestGlobalError = DEFAULT_MAX_ERROR_VALUE
